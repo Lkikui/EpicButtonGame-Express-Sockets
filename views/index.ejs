@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel='stylesheet' href='/style.css'>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Socket Demo</title>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script type ="text/javascript" src="/socket.io/socket.io.js"></script>
+    <script type ="text/javascript">
+        $(document). ready(function (){
+            var socket  = io.connect("http://localhost:8000");
+            var counter = 0;
+            $('.epic_button').click(function (event) {
+                event.preventDefault();
+
+                counter ++;
+                socket.emit("button_clicked", counter);
+            });
+
+            $('.reset_button').click(function (event) {
+                event.preventDefault();
+                
+                counter = 0;
+
+                socket.emit("reset_counter", counter);
+            });
+
+            //updates counter
+            socket.on('updated_counter', function (counter){
+                console.log(counter);
+                document.getElementById("button_count").innerHTML = 'The button has been pushed ' + counter + ' time(s).';
+            });
+
+            //resets counter
+            socket.on('reset_counter', function (counter){
+                console.log(counter);
+                document.getElementById("button_count").innerHTML = 'The button has been pushed ' + counter + ' time(s).';
+            });
+        })
+    </script>
+</head>
+
+<body>
+    <div id = "wrapper">
+        <h1 id="button_count">The button has been pushed 0 time(s).</h1>
+        <p>Push the button to update the count!</p>
+        <button class = "epic_button">Push the epic button</button>
+        <button class = "reset_button">Reset count</button>
+    </div>
+</body>
+</html>
